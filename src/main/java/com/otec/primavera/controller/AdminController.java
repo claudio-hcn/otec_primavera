@@ -90,15 +90,16 @@ public class AdminController {
         return "admin/modulos";
     }
 
-    @PostMapping("/programas/{id}/modulos/guardar")
-    public String guardarModulo(@PathVariable Long id,
-                                @ModelAttribute Modulo modulo) {
-        programaService.findById(id).ifPresent(p -> {
-            modulo.setPrograma(p);
-            moduloRepository.save(modulo);
-        });
-        return "redirect:/admin/programas/" + id + "/modulos";
-    }
+@PostMapping("/programas/{id}/modulos/guardar")
+public String guardarModulo(@PathVariable Long id,
+                             @ModelAttribute Modulo modulo) {
+    programaService.findById(id).ifPresent(p -> {
+        modulo.setPrograma(p);
+        modulo.setId(null);
+        moduloRepository.save(modulo);
+    });
+    return "redirect:/admin/programas/" + id + "/modulos";
+}
 
     @GetMapping("/programas/{id}/modulos/eliminar/{moduloId}")
     public String eliminarModulo(@PathVariable Long id,

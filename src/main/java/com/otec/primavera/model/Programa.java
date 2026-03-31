@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
+import lombok.ToString;
+import lombok.EqualsAndHashCode;
 import java.util.List;
 
 @Data
@@ -39,7 +41,9 @@ public class Programa {
     @Column(nullable = false)
     private Estado estado;
 
-    @OneToMany(mappedBy = "programa", cascade = CascadeType.ALL)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    @OneToMany(mappedBy = "programa", fetch = FetchType.LAZY)
     private List<Modulo> modulos;
 
     public enum Modalidad {
