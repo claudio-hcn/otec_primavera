@@ -1,6 +1,7 @@
 package com.otec.primavera.controller.rest;
 
 import com.otec.primavera.dto.ProgresoDTO;
+import com.otec.primavera.dto.UsuarioRegistroDTO;
 import com.otec.primavera.dto.UsuarioResponseDTO;
 import com.otec.primavera.model.Matricula;
 import com.otec.primavera.model.Usuario;
@@ -38,8 +39,7 @@ public class EstudianteRestController {
                         u.getNombre(),
                         u.getApellido(),
                         u.getEmail(),
-                        u.getRol()
-                )))
+                        u.getRol())))
                 .orElse(ResponseEntity.notFound().build());
     }
 
@@ -49,4 +49,23 @@ public class EstudianteRestController {
                 .map(m -> ResponseEntity.ok(hitoService.calcularProgreso(m)))
                 .orElse(ResponseEntity.notFound().build());
     }
+
+    @PostMapping
+    public ResponseEntity<UsuarioResponseDTO> crearEstudiante(
+            @RequestBody UsuarioRegistroDTO dto) {
+        try {
+            dto.setRol(Usuario.Rol.ESTUDIANTE);
+            Usuario usuario = usuarioService.registrar(dto);
+            UsuarioResponseDTO response = new UsuarioResponseDTO(
+                    usuario.getId(),
+                    usuario.getNombre(),
+                    usuario.getApellido(),
+                    usuario.getEmail(),
+                    usuario.getRol());
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
 }
