@@ -45,7 +45,8 @@ public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
             .invalidateHttpSession(true)
             .clearAuthentication(true)
             .permitAll()
-        );
+        )
+        .httpBasic(httpBasic -> httpBasic.realmName("OTEC Primavera"));
     return http.build();
 }
 
