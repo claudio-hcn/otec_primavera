@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Programas - OTEC Primavera</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .sidebar {
+            min-height: 100vh;
+            background-color: #2e7d32;
+        }
+
+        .sidebar a {
+            color: #c8e6c9;
+            text-decoration: none;
+            display: block;
+            padding: 12px 20px;
+        }
+
+        .sidebar a:hover {
+            background-color: #1b5e20;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="row">
+
+            <!-- Sidebar -->
+            <div class="col-md-2 sidebar p-0">
+                <div class="text-white text-center py-4">
+                    <h5>🌱 OTEC Primavera</h5>
+                </div>
+                <a th:href="@{/admin/dashboard}">📊 Dashboard</a>
+                <a th:href="@{/admin/programas}">📚 Programas</a>
+                <a th:href="@{/admin/estudiantes}">👥 Estudiantes</a>
+                <a th:href="@{/admin/matriculas}">📋 Matrículas</a>
+                <hr style="border-color: #4caf50;">
+                <a th:href="@{/logout}">🚪 Cerrar Sesión</a>
+            </div>
+
+            <!-- Contenido principal -->
+            <div class="col-md-10 p-4">
+                <h3 class="mb-4">Gestión de Programas</h3>
+
+                <!-- Formulario -->
+                <div class="card mb-4">
+                    <div class="card-header bg-white">
+                        <h5 class="mb-0" th:text="${programa.id != null} ? 'Editar Programa' : 'Nuevo Programa'">
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <form
+                            th:action="${programa.id != null} ? @{/admin/programas/actualizar} : @{/admin/programas/guardar}"
+                            th:object="${programa}" method="post">
+                            <input type="hidden" th:field="*{id}">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Nombre</label>
+                                    <input type="text" th:field="*{nombre}" class="form-control" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Tecnología</label>
+                                    <input type="text" th:field="*{tecnologia}" class="form-control"
+                                        placeholder="Java, JavaScript, Python...">
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label">Duración (horas)</label>
+                                    <input type="number" th:field="*{duracionHoras}" class="form-control" required>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label">Modalidad</label>
+                                    <select th:field="*{modalidad}" class="form-select">
+                                        <option value="ONLINE">Online</option>
+                                        <option value="PRESENCIAL">Presencial</option>
+                                        <option value="HIBRIDO">Híbrido</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label">Nivel</label>
+                                    <select th:field="*{nivel}" class="form-select">
+                                        <option value="BASICO">Básico</option>
+                                        <option value="INTERMEDIO">Intermedio</option>
+                                        <option value="AVANZADO">Avanzado</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-8 mb-3">
+                                    <label class="form-label">Descripción</label>
+                                    <textarea th:field="*{descripcion}" class="form-control" rows="2"></textarea>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label">Estado</label>
+                                    <select th:field="*{estado}" class="form-select">
+                                        <option value="ACTIVO">Activo</option>
+                                        <option value="INACTIVO">Inactivo</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-success">
+                                Guardar Programa
+                            </button>
+                            <a th:href="@{/admin/programas}" class="btn btn-outline-secondary ms-2">
+                                Cancelar
+                            </a>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Tabla de programas -->
+                <div class="card">
+                    <div class="card-header bg-white">
+                        <h5 class="mb-0">Programas registrados</h5>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Tecnología</th>
+                                    <th>Horas</th>
+                                    <th>Modalidad</th>
+                                    <th>Nivel</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="p : ${programas}">
+                                    <td th:text="${p.nombre}"></td>
+                                    <td th:text="${p.tecnologia}"></td>
+                                    <td th:text="${p.duracionHoras}"></td>
+                                    <td th:text="${p.modalidad}"></td>
+                                    <td th:text="${p.nivel}"></td>
+                                    <td>
+                                        <span class="badge"
+                                            th:classappend="${p.estado.name() == 'ACTIVO'} ? 'bg-success' : 'bg-secondary'"
+                                            th:text="${p.estado}">
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <a th:href="@{/admin/programas/editar/{id}(id=${p.id})}"
+                                            class="btn btn-sm btn-outline-primary">Editar</a>
+                                        <a th:href="@{/admin/programas/eliminar/{id}(id=${p.id})}"
+                                            class="btn btn-sm btn-outline-danger"
+                                            onclick="return confirm('¿Eliminar este programa?')">Eliminar</a>
+                                        <a th:href="@{/admin/programas/{id}/modulos(id=${p.id})}"
+                                            class="btn btn-sm btn-outline-success">Módulos</a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
